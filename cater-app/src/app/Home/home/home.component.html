@@ -1,0 +1,32 @@
+<div class="container">
+  <h2>Sunday, March 23, 2025</h2>
+  <div class="schedule">
+    <!-- Header row with time slots -->
+    <div class="row header">
+      <div class="cell room-name">Space</div>
+      <div class="cell" *ngFor="let time of timeSlots">{{ time }}</div>
+    </div>
+
+    <!-- Room rows -->
+    <div class="row" *ngFor="let room of rooms">
+      <div class="cell room-name">
+        <span>{{ room.name }} (Capacity {{ room.capacity }})</span>
+      </div>
+      <div class="cell" *ngFor="let status of room.availability; let i = index"
+           [ngClass]="{
+             'available': status === 'AVAILABLE',
+             'unavailable': status === 'UNAVAILABLE',
+             'your-booking': status === 'YOUR_BOOKING'
+           }">
+        <button *ngIf="status === 'AVAILABLE'" (click)="bookRoom(room.name, timeSlots[i])">Book</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <span class="legend-item available">AVAILABLE</span>
+    <span class="legend-item your-booking">YOUR BOOKING</span>
+    <span class="legend-item unavailable">UNAVAILABLE/PENDING</span>
+  </div>
+</div>

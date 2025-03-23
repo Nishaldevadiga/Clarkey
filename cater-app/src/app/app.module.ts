@@ -20,7 +20,8 @@ import { MatInputModule } from '@angular/material/input';
 ]
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
