@@ -25,7 +25,7 @@ export class HomeComponent implements OnInit {
     { name: 'Goddard 442A', capacity: 1, availability: ['AVAILABLE', 'AVAILABLE', 'UNAVAILABLE', 'UNAVAILABLE', 'AVAILABLE', 'AVAILABLE', 'AVAILABLE', 'AVAILABLE', 'AVAILABLE', 'AVAILABLE', 'UNAVAILABLE', 'UNAVAILABLE'] }
   ];
 
-  // Define the time slots
+
   timeSlots = [
     '2:00pm', '3:00pm', '4:00pm', '5:00pm', '6:00pm', '7:00pm',
     '8:00pm', '9:00pm', '10:00pm', '11:00pm', '12:00am', '1:00am'
@@ -35,11 +35,11 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  // Function to parse time string (e.g., "2:00pm") into a Date object
+
   parseTime(timeSlot: string, date: Date): Date {
-    const scheduledDate = new Date(date); // Copy the current date
-    const time = timeSlot.toLowerCase(); // Convert to lowercase for easier parsing
-    let hours = parseInt(time.split(':')[0], 10); // Extract hours
+    const scheduledDate = new Date(date); 
+    const time = timeSlot.toLowerCase(); 
+    let hours = parseInt(time.split(':')[0], 10); 
     const isPM = time.includes('pm');
     const isAM = time.includes('am');
 
@@ -47,7 +47,7 @@ export class HomeComponent implements OnInit {
     if (isPM && hours !== 12) {
       hours += 12; 
     } else if (isAM && hours === 12) {
-      hours = 0; // Midnight
+      hours = 0;
     } else if (time === '12:00am') {
       hours = 0;
     } else if (time === '1:00am') {
@@ -58,27 +58,25 @@ export class HomeComponent implements OnInit {
     return scheduledDate;
   }
 
-  // Function to handle booking
-  bookRoom(roomName: string, timeSlot: string) {
-    const currentTime = new Date(); // Get the current time
-    const scheduledDate = this.parseTime(timeSlot, currentTime); // Parse the scheduled time
 
-    // If the scheduled time is before the current time (e.g., booking for 12:00am or 1:00am the next day),
-    // we assume it's for the next day (March 24, 2025)
+  bookRoom(roomName: string, timeSlot: string) {
+    const currentTime = new Date(); 
+    const scheduledDate = this.parseTime(timeSlot, currentTime);
+
+  
     if (scheduledDate.getHours() < 2) {
-      scheduledDate.setDate(scheduledDate.getDate() + 1); // Move to the next day
+      scheduledDate.setDate(scheduledDate.getDate() + 1);
     }
 
-    // Calculate the time difference in hours
     const timeDifferenceMs = scheduledDate.getTime() - currentTime.getTime();
-    const timeDifferenceHours = timeDifferenceMs / (1000 * 60 * 60); // Convert milliseconds to hours
+    const timeDifferenceHours = timeDifferenceMs / (1000 * 60 * 60);
 
     const bookingData = {
       room: roomName,
       time: timeDifferenceHours 
     };
 
-    // Send API request to the booking endpoint
+
     this.http.post('http://127.0.0.1:5000/submit-booking', bookingData).subscribe(
       (response) => {
         console.log('Booking successful:', response);
