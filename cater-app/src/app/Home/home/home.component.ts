@@ -42,7 +42,6 @@ export class HomeComponent implements OnInit {
     this.fetchWeatherData();
   }
 
-
   fetchWeatherData(): void {
     const url = `${this.weatherApiUrl}?lat=${this.latitude}&lon=${this.longitude}&key=${this.weatherApiKey}&hours=24&units=I`;
     this.http.get(url).subscribe(
@@ -55,7 +54,6 @@ export class HomeComponent implements OnInit {
       }
     );
   }
-
 
   parseTime(timeSlot: string, date: Date): Date {
     const scheduledDate = new Date(date);
@@ -88,21 +86,38 @@ export class HomeComponent implements OnInit {
       return Math.abs(currTimestamp - scheduledTimestamp) < Math.abs(prevTimestamp - scheduledTimestamp) ? curr : prev;
     });
 
-    return closestHour?.temp || null; 
+    return closestHour?.temp || null;
   }
 
+  // Helper function to convert to 24-hour format
+  convertTo24Hour(timeSlot: string): string {
+    const time = timeSlot.toLowerCase();
+    let hours = parseInt(time.split(':')[0], 10);
+    const isPM = time.includes('pm');
+    const isAM = time.includes('am');
 
-  
-   bookRoom(roomName: string, timeSlot: string) {
+    if (isPM && hours !== 12) {
+      hours += 12;
+    } else if (isAM && hours === 12) {
+      hours = 0;
+    } else if (time === '12:00am') {
+      hours = 0;
+    } else if (time === '1:00am') {
+      hours = 1;
+    }
+
+    // Pad hours with leading zero if needed and return in HH:MM format
+    return `${hours.toString().padStart(2, '0')}:00`;
+  }
+
+  bookRoom(roomName: string, timeSlot: string) {
     const currentTime = new Date();
     const scheduledDate = this.parseTime(timeSlot, currentTime);
 
-    
     if (scheduledDate.getHours() < 2) {
       scheduledDate.setDate(scheduledDate.getDate() + 1);
     }
 
- 
     const timeDifferenceMs = scheduledDate.getTime() - currentTime.getTime();
     const timeDifferenceMinutes = parseFloat((timeDifferenceMs / (1000 * 60)).toFixed(4));
 
@@ -113,11 +128,11 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-
     const bookingData = {
       room: roomName,
-      time: timeDifferenceMinutes,  
-      temperature: temperature      
+      diff_time: timeDifferenceMinutes,
+      temperature: temperature,
+      book_time: this.convertTo24Hour(timeSlot)  // Convert to 24-hour format
     };
 
     this.http.post('http://127.0.0.1:5000/submit-booking', bookingData).subscribe(
