@@ -18,7 +18,9 @@
              'unavailable': status === 'UNAVAILABLE',
              'your-booking': status === 'YOUR_BOOKING'
            }">
-        <button *ngIf="status === 'AVAILABLE'" (click)="bookRoom(room.name, timeSlots[i])">Book</button>
+        <button *ngIf="status === 'AVAILABLE'" 
+                (click)="bookRoom(room.name, timeSlots[i])"
+                [disabled]="isTimeSlotPast(timeSlots[i])">Book</button>
       </div>
     </div>
   </div>
