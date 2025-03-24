@@ -1,0 +1,26 @@
+
+<div class="hvac-dashboard">
+    <div class="display-panel">
+      <h2>HVAC Control Unit</h2>
+      
+      <!-- Room Name (if provided) -->
+      <div class="room-info" *ngIf="roomName">
+        <span class="label">Room:</span>
+        <span class="value">{{ roomName }}</span>
+      </div>
+  
+      <!-- Current Time -->
+      <div class="time-info">
+        <span class="label">Current Time:</span>
+        <span class="value">{{ currentTime }}</span>
+      </div>
+  
+      <!-- Scheduled Time -->
+      <div class="scheduled-info">
+        <span class="label">Heating Starts at:</span>
+        <div *ngIf="scheduledTime" class="Schedule">
+             {{ scheduledTime}} 
+          </div>
+      </div>
+    </div>
+  </div>

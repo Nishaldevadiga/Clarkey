@@ -1,0 +1,53 @@
+.hvac-dashboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .display-panel {
+    background-color: #ffffff;
+    border: 2px solid #333;
+    border-radius: 10px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+  
+  h2 {
+    margin: 0 0 20px;
+    color: #333;
+    font-size: 1.5em;
+  }
+  
+  .room-info, .time-info, .scheduled-info {
+    margin: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .label {
+    font-weight: bold;
+    color: #555;
+    font-size: 1.1em;
+  }
+  
+  .value {
+    color: #000;
+    font-size: 1.2em;
+  }
+  
+  .scheduled-time {
+    font-size: 1.5em;
+    color: #007bff; /* Blue to highlight scheduled time */
+    font-weight: bold;
+  }
+
+.Schedule{
+    color: #000;
+    font-size: 1.2em;
+}

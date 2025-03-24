@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -7,6 +8,9 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+
+  ShowValue=false;
+ 
   rooms = [
     { name: 'Goddard 203A', capacity: 5, availability: ['AVAILABLE', 'AVAILABLE', 'UNAVAILABLE', 'UNAVAILABLE', 'AVAILABLE', 'AVAILABLE', 'AVAILABLE', 'AVAILABLE', 'AVAILABLE', 'AVAILABLE', 'UNAVAILABLE', 'UNAVAILABLE'] },
     { name: 'Goddard 305', capacity: 5, availability: ['AVAILABLE', 'AVAILABLE', 'UNAVAILABLE', 'UNAVAILABLE', 'AVAILABLE', 'AVAILABLE', 'AVAILABLE', 'AVAILABLE', 'AVAILABLE', 'AVAILABLE', 'UNAVAILABLE', 'UNAVAILABLE'] },
@@ -35,6 +39,8 @@ export class HomeComponent implements OnInit {
   private latitude = 42.2523; 
   private longitude = -71.8235;
   private weatherData: any = null;
+
+  private readonly router = inject(Router);
 
   constructor(private http: HttpClient) {}
 
@@ -113,31 +119,53 @@ export class HomeComponent implements OnInit {
   bookRoom(roomName: string, timeSlot: string) {
     const currentTime = new Date();
     const scheduledDate = this.parseTime(timeSlot, currentTime);
-
+  
     if (scheduledDate.getHours() < 2) {
       scheduledDate.setDate(scheduledDate.getDate() + 1);
     }
-
+  
     const timeDifferenceMs = scheduledDate.getTime() - currentTime.getTime();
     const timeDifferenceMinutes = parseFloat((timeDifferenceMs / (1000 * 60)).toFixed(4));
-
+  
     const temperature = this.getTemperatureForTime(scheduledDate);
-
+  
     if (temperature === null) {
       alert('Temperature data is not available. Please try again later.');
       return;
     }
-
+  
     const bookingData = {
       room: roomName,
       diff_time: timeDifferenceMinutes,
       temperature: temperature,
       book_time: this.convertTo24Hour(timeSlot)  // Convert to 24-hour format
     };
-
+  
     this.http.post('http://127.0.0.1:5000/submit-booking', bookingData).subscribe(
-      (response) => {
+      (response: any) => {
         console.log('Booking successful:', response);
+  
+        // Get current time
+        const now = new Date();
+        
+        // Assume calculated_time_adjustment is in minutes from the response
+        const calculatedTimeAdjustment = response['calculated_time_adjustment'] || 0; // Fallback to 0 if not present
+        
+        // Calculate the adjusted time by adding adjustment (in minutes) to current time
+        const adjustedTime = new Date(now.getTime() + calculatedTimeAdjustment * 60000); // Convert minutes to milliseconds
+        
+        // Format the adjusted time to HH:MM (24-hour format)
+        const hours = adjustedTime.getHours().toString().padStart(2, '0');
+        const minutes = adjustedTime.getMinutes().toString().padStart(2, '0');
+        const formattedTime = `${hours}:${minutes}`;
+  
+        // Navigate to dashboard with the formatted time as data
+        this.router.navigate(['/dashboard'], {
+          state: { 
+            data:formattedTime // Pass the adjusted time in HH:MM format
+          }
+        });
+  
         alert(`Successfully booked ${roomName} at ${timeSlot} (${timeDifferenceMinutes.toFixed(4)} minutes from now). Temperature: ${temperature}°F`);
         const room = this.rooms.find(r => r.name === roomName);
         if (room) {

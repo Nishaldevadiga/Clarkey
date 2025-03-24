@@ -13,15 +13,19 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { DashboardComponentComponent } from './Dashboard/dashboard-component/dashboard-component.component';
 
 
  const routes:Routes=[
-  {path:'',component:HomeComponent}
+  {path:'',component:HomeComponent},
+  {path:'dashboard',component:DashboardComponentComponent}
+ 
 ]
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    DashboardComponentComponent
   ],
   imports: [
     BrowserModule,
